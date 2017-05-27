@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Styleguide</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="prism.css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oxygen:400,700">
+</head>
+<body>
+    <div class="main">
+        <div class="header js-heaer">header</div>
+        <div class="nav js-nav">
+            <ul>
+                <menu-item
+                    v-for="item in menuList"
+                    v-bind:menu="item"
+                    v-bind:key="item.id">
+                </menu-item>
+            </ul>
+        </div>
+        <div class="phytoplankton-page section js-section">
+            <div v-html="compiledMarkdown"></div>
+        </div>
+    </div>
+
+    <!-- <script src="https://unpkg.com/lodash@4.16.0"></script> -->
+    <script src="https://unpkg.com/marked@0.3.6"></script>
+    <script src="http://vuejs.org/js/vue.js"></script>
+    <script src="http://tonyganch.com/gonzales-pe/js/gonzales.js"></script>
+    <script src="http://tonyganch.com/gonzales-pe/js/gonzales-primitives.js"></script>
+    <script src="prism.js"></script>
+    <script src="separate.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
