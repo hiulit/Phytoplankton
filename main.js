@@ -7,8 +7,6 @@
 // console.log(parse);
 // console.log(parse.toString());
 
-// var file = 'readme.css';
-
 // To convert input -> section.input = "foo bar"
 // var section = new Vue({
 //   el: '.section',
@@ -34,14 +32,25 @@
 
 Vue.component('menu-item', {
   props: ['menu'],
-  template: '<li>{{ menu.title }}<ul><li v-for="url in menu.url"><a v-bind:data-url="url" @click="goToFile">{{ url }}</a></li></ul></li>',
+  template: '<li>' +
+              '{{ menu.title }}' +
+              '<ul>' +
+                '<li v-for="url in menu.url">' +
+                  '<a v-bind:data-url="url" @click="goToFile">{{ url }}</a>' +
+                '</li>' +
+              '</ul>' +
+            '</li>',
   // data: {
 
   // },
   methods: {
     goToFile: function(e) {
-      // console.log(e.target.dataset.url);
       // section.url = this.menu.url;
+      var menuArray = document.querySelectorAll('.js-nav a');
+      for (var i = 0, len = menuArray.length; i < len; i++) {
+        menuArray[i].classList.remove('is-active');
+      }
+      e.target.classList.add('is-active');
       section.url = e.target.dataset.url;
       section.loadFile();
     }
@@ -85,49 +94,39 @@ var section = new Vue({
       rq.onreadystatechange = function(section) {
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
-            // console.log(section.url);
-            // if(result === null) {
-            //   return alert('You\'re missing the extension (.css, .stylus, .styl, .less, .sass, .scss) in the URL.');
-            // }
-
             var items = separate(this.responseText);
             section.info = '';
-            items.forEach(function(item, index, array) {
-              section.info += item.docs;
-            });
+            for (var i = 0, len = items.length; i < len; i++) {
+              section.info += items[i].docs;
+            };
+            var tokens = marked.lexer(section.info);
+            var links = tokens.links || {};
+            var block = {
+              content: []
+            };
 
-            // var tokens = marked.lexer(section.info);
-            // var links = tokens.links || {};
-            // var block = {
-            //   content: []
-            // };
-
-            // for (var i = 0, len = tokens.length; i < len; i++) {
-            //   switch (tokens[i].type) {
-            //     case 'code':
-            //       if (tokens[i].lang === 'markup') {
-            //         block.content.push({
-            //           type: 'html',
-            //           lang: 'markup',
-            //           text: '<div class="code-render clearfix">' + tokens[i].text + '</div>' +
-            //               '<ul class="phytoplankton-tabs">' +
-            //               '<li class="phytoplankton-tabs__item is-active">HTML</li>' +
-            //               '</ul>'
-            //         });
-            //         console.log(block);
-            //       }
-            //     break;
-            //     default:
-            //       block.content.push(tokens[i]);
-            //       // console.log(block);
-            //     break;
-            //   }
-            // }
-            // block.content.links = links;
-            // // console.log(block);
-            // block.content = marked.parser(block.content);
-            // section.info = block.content;
-
+            for (var i = 0, len = tokens.length; i < len; i++) {
+              switch (tokens[i].type) {
+                case 'code':
+                  if (tokens[i].lang === 'markup') {
+                    block.content.push({
+                      type: 'html',
+                      lang: 'markup',
+                      text: '<ul class="phytoplankton-tabs">' +
+                            '<li class="phytoplankton-tabs__item is-active">HTML</li>' +
+                            '</ul>' +
+                            '<div class="code-render clearfix">' + tokens[i].text + '</div>'
+                    });
+                  }
+                break;
+                default:
+                  block.content.push(tokens[i]);
+                break;
+              }
+            }
+            block.content.links = links;
+            block.content = marked.parser(block.content);
+            section.info = block.content;
           } else {
             section.info = 'Request Failed';
             section.info += ': You\'re missing the extension (.css, .stylus, .styl, .less, .sass, .scss) in menuList.'
@@ -141,13 +140,13 @@ var section = new Vue({
   },
   computed: {
     compiledMarkdown: function() {
-      // return this.info
-      return marked(this.info, {
-        sanitize: false,
-        gfm: true,
-        tables: true,
-        langPrefix: 'language-'
-      })
+      return this.info
+      // return marked(this.info, {
+      //   sanitize: false,
+      //   gfm: true,
+      //   tables: true,
+      //   langPrefix: 'language-'
+      // })
     }
   },
   updated: function() { // "onReady function"
@@ -160,5 +159,9 @@ var section = new Vue({
   }
 })
 
+// Set first menu link's state to "active".
+document.querySelectorAll('.js-nav a')[0].classList.add('is-active');
+// Set section URL to first menu item.
 section.url = menuList[0].url[0];
+// Load first file.
 section.loadFile();
