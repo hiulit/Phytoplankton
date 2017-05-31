@@ -21,17 +21,17 @@ Vue.component('menu-item', {
   methods: {
     goToFile: function(e) {
       var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
-      for (var i = 0, len = menuArray.length; i < len; i++) {
+      for (var i = 0, length = menuArray.length; i < length; i++) {
         menuArray[i].classList.remove('is-active');
       }
       e.target.classList.add('is-active');
-      section.url = e.target.dataset.url;
-      section.loadFile();
+      page.url = e.target.dataset.url;
+      page.loadFile();
     }
   }
 })
 
-// To add new items -> menu.menu.push({text: 'new item'})
+// To add new items -> menu.menu.push({text: 'new item', url: 'new url'})
 var menu = new Vue({
   el: '.js-phytoplankton-menu',
   data: {
@@ -40,7 +40,7 @@ var menu = new Vue({
 })
 
 Vue.component('page-item', {
-    props: ['section'],
+    props: ['page'],
     template: '<div class="phytoplankton-page__item"></div>',
     // data: {
     // },
@@ -48,7 +48,7 @@ Vue.component('page-item', {
     // }
 });
 
-var section = new Vue({
+var page = new Vue({
   el: '.js-phytoplankton-page',
   data: {
     url: '',
@@ -58,32 +58,34 @@ var section = new Vue({
   },
   methods: {
     loadFile: function() {
-      this.docs = "Requesting ...";
+      this.docs = 'Requesting ...';
       var rq = new XMLHttpRequest();
 
-      rq.onreadystatechange = function(section) {
+      rq.onreadystatechange = function(page) {
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
             var items = separate(this.responseText);
-            section.docs = '';
-            for (var i = 0, len = items.length; i < len; i++) {
-              section.docs += items[i].docs;
-              // console.log(items[i].css);
-              var block = {
-                docs: items[i].docs,
-                // css: items[i].css
-              };
-              section.blocks.push(block)
+            page.docs = '';
+
+            for (var i = 0, length = items.length; i < length; i++) {
+              page.docs += items[i].docs;
+              // page.css += items[i].css;
+
+              // var block = {
+              //   docs: items[i].docs,
+              //   // css: items[i].css
+              // };
+              // page.blocks.push(block)
             };
-            console.log(section.blocks);
-            var tokens = marked.lexer(section.docs);
+
+            var tokens = marked.lexer(page.docs);
             var links = tokens.links || {};
             var block = {
               docs: [],
               css: []
             };
 
-            for (var i = 0, len = tokens.length; i < len; i++) {
+            for (var i = 0, length = tokens.length; i < length; i++) {
               switch (tokens[i].type) {
                 case 'code':
                   if (tokens[i].lang === 'markup') {
@@ -104,11 +106,11 @@ var section = new Vue({
             }
             block.docs.links = links;
             block.docs = marked.parser(block.docs);
-            section.docs = block.docs;
+            page.docs = block.docs;
           } else {
-            section.docs = '**Request Failed!**\n\n' +
+            page.docs = '**Request Failed!**\n\n' +
                            'Either the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
-            section.docs = marked(section.docs);
+            page.docs = marked(page.docs);
           }
         }
       }.bind(rq, this);
@@ -129,10 +131,20 @@ var section = new Vue({
     }
   },
   updated: function() { // "onReady function"
-    var pre = document.getElementsByTagName("pre");
-    for (var i = 0, len = pre.length; i < len; i++) {
-      pre[i].className = 'line-numbers';
+    var pre = document.getElementsByTagName('pre');
+    for (var i = 0, length = pre.length; i < length; i++) {
+      pre[i].classList.add('line-numbers');
     }
+    var headings = document.querySelectorAll('h1');
+    var submenu = document.createElement('ul');
+    // console.log(headings);
+    for (var i = 0, length = headings.length; i < length; i++) {
+      submenuItem = document.createElement('li');
+      submenuItem.setAttribute('id', headings[i].id);
+      submenuItem.appendChild(document.createTextNode(headings[i].innerText));
+      submenu.appendChild(submenuItem);
+    }
+    console.log(submenu);
     Prism.highlightAll();
     Prism.fileHighlight();
     fixie.init();
@@ -141,7 +153,7 @@ var section = new Vue({
 
 // Set first menu link's state to "active".
 document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
-// Set section URL to first menu item.
-section.url = config.menu[0].url[0];
+// Set page URL to first menu item.
+page.url = config.menu[0].url[0];
 // Load first file.
-section.loadFile();
+page.loadFile();
