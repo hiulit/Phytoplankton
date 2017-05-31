@@ -26,3 +26,7 @@
 //   color: #f8f8f2;
 //   /* This is a "feature" that doesn't  come with the default plugin. */
 // }
+
+ul[data-gumshoe]:first-of-type {
+	display: none;
+}

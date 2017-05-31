@@ -20,13 +20,22 @@ Vue.component('menu-item', {
   // },
   methods: {
     goToFile: function(e) {
-      var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
-      for (var i = 0, length = menuArray.length; i < length; i++) {
-        menuArray[i].classList.remove('is-active');
+      if (page.url != e.target.dataset.url) {
+        var submenu = document.querySelectorAll('[data-gumshoe]');
+        for (var i = 0, length = submenu.length; i < length; i++) {
+          console.log(submenu[i]);
+          submenu[i].parentNode.removeChild(submenu[i]);
+        }
+        // console.log(submenu);
+        // submenu.parentNode.removeChild(submenu);
+        var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
+        for (var i = 0, length = menuArray.length; i < length; i++) {
+          menuArray[i].classList.remove('is-active');
+        }
+        e.target.classList.add('is-active');
+        page.url = e.target.dataset.url;
+        page.loadFile();
       }
-      e.target.classList.add('is-active');
-      page.url = e.target.dataset.url;
-      page.loadFile();
     }
   }
 })
@@ -135,16 +144,21 @@ var page = new Vue({
     for (var i = 0, length = pre.length; i < length; i++) {
       pre[i].classList.add('line-numbers');
     }
+
     var headings = document.querySelectorAll('h1');
     var submenu = document.createElement('ul');
-    // console.log(headings);
+    submenu.setAttribute('data-gumshoe', '');
     for (var i = 0, length = headings.length; i < length; i++) {
       submenuItem = document.createElement('li');
-      submenuItem.setAttribute('id', headings[i].id);
-      submenuItem.appendChild(document.createTextNode(headings[i].innerText));
+      submenuItemAnchor = document.createElement('a');
+      submenuItem.appendChild(submenuItemAnchor);
+      submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
+      submenuItemAnchor.setAttribute('data-scroll', '');
+      submenuItemAnchor.appendChild(document.createTextNode(headings[i].innerText));
       submenu.appendChild(submenuItem);
     }
-    console.log(submenu);
+    document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(submenu);
+
     Prism.highlightAll();
     Prism.fileHighlight();
     fixie.init();
