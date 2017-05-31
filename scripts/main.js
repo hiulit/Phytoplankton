@@ -46,7 +46,7 @@ Vue.component('menu-item', {
   methods: {
     goToFile: function(e) {
       // section.url = this.menu.url;
-      var menuArray = document.querySelectorAll('.js-nav a');
+      var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
       for (var i = 0, len = menuArray.length; i < len; i++) {
         menuArray[i].classList.remove('is-active');
       }
@@ -57,59 +57,66 @@ Vue.component('menu-item', {
   }
 })
 
-var menuList = [
-  {
-    title: "Phytoplankton Style Guide",
-    url: [
-      "readme.css"
-    ]
-  },
-  {
-    title: "Documentation",
-    url: [
-      "documentation.css"
-    ]
-  },
-]
-
-// To add new items -> menu.menuList.push({text: 'new item'})
+// To add new items -> menu.menu.push({text: 'new item'})
 var menu = new Vue({
-  el: '.js-nav',
+  el: '.js-phytoplankton-menu',
   data: {
-    menuList: menuList
+    items: config.menu
   }
 })
 
+Vue.component('page-item', {
+    props: ['section'],
+    template: '<div class="phytoplankton-page__item"></div>',
+    // data: {
+
+    // },
+    methods: {
+
+    }
+});
+
 var section = new Vue({
-  el: '.js-section',
+  el: '.js-phytoplankton-page',
   data: {
     url: '',
-    info: ''
+    docs: '',
+    css: '',
+    blocks: []
   },
   methods: {
     loadFile: function() {
-      this.info = "Requesting ...";
+      this.docs = "Requesting ...";
       var rq = new XMLHttpRequest();
 
       rq.onreadystatechange = function(section) {
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
             var items = separate(this.responseText);
-            section.info = '';
+            section.docs = '';
             for (var i = 0, len = items.length; i < len; i++) {
-              section.info += items[i].docs;
+              section.docs += items[i].docs;
+              // console.log(items[i].css);
+              var block = {
+                docs: items[i].docs,
+                css: items[i].css
+              };
+              section.blocks.push(block)
             };
-            var tokens = marked.lexer(section.info);
+            console.log(section.blocks);
+            // console.log(section.docs);
+            var tokens = marked.lexer(section.docs);
             var links = tokens.links || {};
             var block = {
-              content: []
+              docs: [],
+              css: []
             };
 
             for (var i = 0, len = tokens.length; i < len; i++) {
               switch (tokens[i].type) {
                 case 'code':
                   if (tokens[i].lang === 'markup') {
-                    block.content.push({
+                    block.docs.push({
                       type: 'html',
                       lang: 'markup',
                       text: '<ul class="phytoplankton-tabs">' +
@@ -120,16 +127,17 @@ var section = new Vue({
                   }
                 break;
                 default:
-                  block.content.push(tokens[i]);
+                  block.docs.push(tokens[i]);
                 break;
               }
             }
-            block.content.links = links;
-            block.content = marked.parser(block.content);
-            section.info = block.content;
+            block.docs.links = links;
+            block.docs = marked.parser(block.docs);
+            section.docs = block.docs;
           } else {
-            section.info = 'Request Failed';
-            section.info += ': You\'re missing the extension (.css, .stylus, .styl, .less, .sass, .scss) in menuList.'
+            section.docs = '**Request Failed!**\n\n' +
+                           'Either the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
+            section.docs = marked(section.docs);
           }
         }
       }.bind(rq, this);
@@ -140,8 +148,8 @@ var section = new Vue({
   },
   computed: {
     compiledMarkdown: function() {
-      return this.info
-      // return marked(this.info, {
+      return this.docs
+      // return marked(this.docs, {
       //   sanitize: false,
       //   gfm: true,
       //   tables: true,
@@ -156,12 +164,13 @@ var section = new Vue({
     }
     Prism.highlightAll();
     Prism.fileHighlight();
+    fixie.init();
   }
 })
 
 // Set first menu link's state to "active".
-document.querySelectorAll('.js-nav a')[0].classList.add('is-active');
+document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
 // Set section URL to first menu item.
-section.url = menuList[0].url[0];
+section.url = config.menu[0].url[0];
 // Load first file.
 section.loadFile();
