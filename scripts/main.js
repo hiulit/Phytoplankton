@@ -4,48 +4,22 @@
 
 // var parse = gonzales.parse(css);
 
-// console.log(parse);
-// console.log(parse.toString());
-
-// To convert input -> section.input = "foo bar"
-// var section = new Vue({
-//   el: '.section',
-//   data: {
-//     // message: 'new section',
-//     input: '# hola'
-//   },
-//   computed: {
-//     compiledMarkdown: function() {
-//       return marked(this.input, {
-//         sanitize: true
-//       })
-//     }
-//   },
-//   methods: {
-//     update: _.debounce(function(e) {
-//       this.input = e.target.value
-//     }, 300)
-//   }
-// })
-//
-// section.input = "# hola";
-
 Vue.component('menu-item', {
   props: ['menu'],
-  template: '<li>' +
-              '{{ menu.title }}' +
-              '<ul>' +
-                '<li v-for="url in menu.url">' +
-                  '<a v-bind:data-url="url" @click="goToFile">{{ url }}</a>' +
+  template: '<li class="phytoplankton-menu__list__item">' +
+              '<div class="phytoplankton-menu__list__item__header">' +
+                '{{ menu.title }}' +
+              '</div>' +
+              '<ul class="phytoplankton-menu__list">' +
+                '<li class="phytoplankton-menu__list__item" v-for="url in menu.url">' +
+                  '<a class="phytoplankton-menu__list__item__subheader" v-bind:data-url="url" @click="goToFile">{{ url }}</a>' +
                 '</li>' +
               '</ul>' +
             '</li>',
   // data: {
-
   // },
   methods: {
     goToFile: function(e) {
-      // section.url = this.menu.url;
       var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
       for (var i = 0, len = menuArray.length; i < len; i++) {
         menuArray[i].classList.remove('is-active');
@@ -69,11 +43,9 @@ Vue.component('page-item', {
     props: ['section'],
     template: '<div class="phytoplankton-page__item"></div>',
     // data: {
-
     // },
-    methods: {
-
-    }
+    // methods: {
+    // }
 });
 
 var section = new Vue({
@@ -99,12 +71,11 @@ var section = new Vue({
               // console.log(items[i].css);
               var block = {
                 docs: items[i].docs,
-                css: items[i].css
+                // css: items[i].css
               };
               section.blocks.push(block)
             };
             console.log(section.blocks);
-            // console.log(section.docs);
             var tokens = marked.lexer(section.docs);
             var links = tokens.links || {};
             var block = {
