@@ -1,0 +1,28 @@
+// .main {
+// }
+
+// .header {
+// }
+
+// .nav {
+//     float: left;
+//     width: 25%;
+// }
+
+// .nav a.is-active {
+//     font-weight: bold;
+// }
+
+// .section {
+//     float: left;
+//     width: 75%;
+// }
+
+// :not(pre) > code,
+// pre,
+// :not(pre) > code[class*="language-"],
+// pre[class*="language-"] {
+//   background: #272822;
+//   color: #f8f8f2;
+//   /* This is a "feature" that doesn't  come with the default plugin. */
+// }
