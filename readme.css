@@ -1,6 +1,10 @@
 /*
 # Phytoplankton - Living Style Guide
 
+> This is a Vue.js port of [Phytoplankton - Living Style Guide](https://github.com/hiulit/kaleistyleguide)
+which is a fork of [Kalei - Style Guide](https://github.com/thomasdavis/kaleistyleguide).
+It's an alpha version, although it's kind of functional. Not officially released to the public.
+
 Generate a living style guide with your own CSS!
 
 This project aims at making sure your style sheets are fully documented whilst being synchronized with your project styles.
@@ -38,9 +42,9 @@ Just:
 /*
 # Prepocessors support
 
-* [Sass](http://sass-lang.com/) ([libsass v3.1.0](https://github.com/sass/libsass/releases/tag/3.1.0))
-* [Less](http://lesscss.org/) ([v2.5.1](https://github.com/less/less.js/releases/tag/v2.5.1))
-* [Stylus](http://stylus-lang.com/) ([v0.54.5](https://github.com/stylus/stylus/releases/tag/0.54.5))
+* ~~[Sass](http://sass-lang.com/) ([libsass v3.1.0](https://github.com/sass/libsass/releases/tag/3.1.0))~~
+* ~~[Less](http://lesscss.org/) ([v2.5.1](https://github.com/less/less.js/releases/tag/v2.5.1))~~
+* ~~[Stylus](http://stylus-lang.com/) ([v0.54.5](https://github.com/stylus/stylus/releases/tag/0.54.5))~~
 
 ## Notes
 
