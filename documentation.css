@@ -20,7 +20,7 @@ So go ahead and [master your Markdown](http://guides.github.com/overviews/master
 /*
 # Getting Started
 
-Phytoplankton uses `phytoplankton-core/scripts/config.js` as a base to point at all the style sheets that you want to document.
+Phytoplankton uses `scripts/config.js` as a base to point at all the style sheets that you want to document.
 
 Here you can set the menu based on your style sheets and some configurations.
 
@@ -28,7 +28,7 @@ Phytoplankton will **automatically create a menu** out of your style sheets.
 
 This is how this particular `config.js` looks like:
 
-<pre data-src="separate.js"></pre>
+<pre data-src="scripts/config.js"></pre>
 
 */
 
