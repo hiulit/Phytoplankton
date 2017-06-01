@@ -23,11 +23,8 @@ Vue.component('menu-item', {
       if (page.url != e.target.dataset.url) {
         var submenu = document.querySelectorAll('[data-gumshoe]');
         for (var i = 0, length = submenu.length; i < length; i++) {
-          console.log(submenu[i]);
           submenu[i].parentNode.removeChild(submenu[i]);
         }
-        // console.log(submenu);
-        // submenu.parentNode.removeChild(submenu);
         var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
         for (var i = 0, length = menuArray.length; i < length; i++) {
           menuArray[i].classList.remove('is-active');
@@ -149,8 +146,6 @@ var page = new Vue({
     var submenu = document.createElement('ul');
     submenu.setAttribute('data-gumshoe', '');
     for (var i = 0, length = headings.length; i < length; i++) {
-      submenuItem = document.createElement('li');
-      submenuItemAnchor = document.createElement('a');
       submenuItem.appendChild(submenuItemAnchor);
       submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
       submenuItemAnchor.setAttribute('data-scroll', '');
