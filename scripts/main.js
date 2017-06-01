@@ -146,6 +146,8 @@ var page = new Vue({
     var submenu = document.createElement('ul');
     submenu.setAttribute('data-gumshoe', '');
     for (var i = 0, length = headings.length; i < length; i++) {
+      var submenuItem = document.createElement('li');
+      var submenuItemAnchor = document.createElement('a');
       submenuItem.appendChild(submenuItemAnchor);
       submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
       submenuItemAnchor.setAttribute('data-scroll', '');
@@ -157,6 +159,12 @@ var page = new Vue({
     Prism.highlightAll();
     Prism.fileHighlight();
     fixie.init();
+    smoothScroll.init({
+      offset: 48
+    });
+    gumshoe.init({
+      offset: 49
+    });
   }
 })
 
