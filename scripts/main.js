@@ -32,6 +32,8 @@ Vue.component('menu-item', {
         e.target.classList.add('is-active');
         page.url = e.target.dataset.url;
         page.loadFile();
+      } else {
+        return;
       }
     }
   }
@@ -46,12 +48,15 @@ var menu = new Vue({
 })
 
 Vue.component('page-item', {
-    props: ['page'],
-    template: '<div class="phytoplankton-page__item"></div>',
-    // data: {
-    // },
-    // methods: {
-    // }
+  props: ['page'],
+  template: '<div class="phytoplankton-page__item">'+
+              '{{ page.docs }}' +
+              '{{ page.code }}' +
+            '</div>',
+  // data: {
+  // },
+  // methods: {
+  // }
 });
 
 var page = new Vue({
@@ -59,7 +64,7 @@ var page = new Vue({
   data: {
     url: '',
     docs: '',
-    css: '',
+    code: '',
     blocks: []
   },
   methods: {
@@ -71,30 +76,46 @@ var page = new Vue({
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
             var items = separate(this.responseText);
+            // Resets
             page.docs = '';
+            page.blocks = [];
 
             for (var i = 0, length = items.length; i < length; i++) {
               page.docs += items[i].docs;
-              // page.css += items[i].css;
+              page.code += items[i].code;
 
-              // var block = {
-              //   docs: items[i].docs,
-              //   // css: items[i].css
-              // };
-              // page.blocks.push(block)
+              var block = {
+                docs: items[i].docs,
+                code: items[i].code
+              };
+              page.blocks.push(block);
+
+              // parsedCSS = gonzales.parse(items[i].code);
+              // parsedCSS = parsedCSS.content;
+              // for (var j = 0, csslength = parsedCSS.length; j < csslength; j++) {
+              //   if (parsedCSS[j].type === 'ruleset') {
+              //     var ruleset = parsedCSS[j].toString();
+              //     cssArray.push('.code-render ' + ruleset);
+              //   }
+              // }
+
             };
+
+            console.log(page.blocks);
 
             var tokens = marked.lexer(page.docs);
             var links = tokens.links || {};
             var block = {
               docs: [],
-              css: []
+              code: []
             };
 
             for (var i = 0, length = tokens.length; i < length; i++) {
               switch (tokens[i].type) {
                 case 'code':
-                  if (tokens[i].lang === 'markup') {
+                  if (!tokens[i].lang) {
+                    block.docs.push(tokens[i]);
+                  } else if (tokens[i].lang === 'markup') {
                     block.docs.push({
                       type: 'html',
                       lang: 'markup',
