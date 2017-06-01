@@ -94,8 +94,8 @@ Not tested on Safari.
 * ~~Fix tooltips overflow issue.~~
 * ~~Fix tabs scroll.~~
 * Improve tabs system.
-* Fix issue with Prism's File Highlight plugin async loading causing Gumshoe (e.g. <pre data-src="") not to work properly.
-* RequireJS & Backbone optimization (separate modules, create components, etc.).
+* ~~Fix issue with Prism's File Highlight plugin async loading causing Gumshoe (e.g. <pre data-src="") not to work properly.~~
+* ~~RequireJS & Backbone optimization (separate modules, create components, etc.).~~
 * Add a view for showing colors, images (galleries, etc.).
 * Add loading state in pages.
 * Need **help** updating [sass.js](https://github.com/medialize/sass.js) to the latest version.
@@ -114,15 +114,17 @@ Phytoplankton is heavily influenced by the projects found in [http://styleguides
 
 Mad propz to all the great people behind the software listed below.
 
-* [RequireJS](http://requirejs.org/) - JavaScript file and module loader.
-* [Backbone.js](http://backbonejs.org/) - Gives structure to web applications by providing models, collections and views.
-* [Underscore.js](http://underscorejs.org/) - JavaScript library that provides a whole mess of useful functional programming helpers without extending any built-in objects.
-* [Handlebars.js](http://handlebarsjs.com/) - Minimal templating on steroids.
-* [jQuery](http://jquery.com) - Fast, small, and feature-rich JavaScript library.
-* [marked.js](https://github.com/chjj/marked) - Full-featured markdown parser and compiler in Javascript.
-* [gonzales](https://github.com/css/gonzales) - Fast CSS parser.
-* [sass.js](https://github.com/medialize/sass.js) - API for emscripted libsass to run in the browser.
-* [Less](http://lesscss.org/) - CSS pre-prepocessor.
+* [Vue](https://vuejs.org/) - Intuitive, Fast and Composable MVVM for building interactive interfaces.
+* ~~[RequireJS](http://requirejs.org/) - JavaScript file and module loader.~~
+* ~~[Backbone.js](http://backbonejs.org/) - Gives structure to web applications by providing models, collections and views.~~
+* ~~[Underscore.js](http://underscorejs.org/) - JavaScript library that provides a whole mess of useful functional programming helpers without extending any built-in objects.~~
+* ~~[Handlebars.js](http://handlebarsjs.com/) - Minimal templating on steroids.~~
+* ~~[jQuery](http://jquery.com) - Fast, small, and feature-rich JavaScript library.~~
+* [marked](https://github.com/chjj/marked) - Full-featured markdown parser and compiler in Javascript.
+* ~~[gonzales](https://github.com/css/gonzales) - Fast CSS parser.~~
+* [gonzales-pe](https://github.com/tonyganch/gonzales-pe) - CSS parser with support of preprocessors.
+* ~~[sass.js](https://github.com/medialize/sass.js) - API for emscripted libsass to run in the browser.~~
+* ~~[Less](http://lesscss.org/) - CSS pre-prepocessor.~~
 * [Prism](http://prismjs.com/) - Lightweight, robust, elegant syntax highlighting.
 * [Fixie.js](https://github.com/hiulit/fixie) - Automatically add filler content to HTML documents (featuring the awesome [VeganIpsum - All filler, no killer](http://bengreen.org.uk/veganipsum/)).
 * [Gumshoe](https://github.com/cferdinandi/gumshoe) - A simple, framework-agnostic scrollspy script.
@@ -130,10 +132,10 @@ Mad propz to all the great people behind the software listed below.
 
 ## Extras
 
-* [Sassy-Gridlover](https://github.com/hiulit/Sassy-Gridlover) - Super easy to use Sass mixins to establish a typographic system with modular scale and vertical rhythm.
-* [Sass Vegan Burger](https://github.com/hiulit/sass-burger) - A Sass mixin for creating (100% vegan) hamburger icons.
-* [Stacktable](https://github.com/johnpolacek/stacktable.js) - jQuery plugin for stacking tables on small screens.
-* [clipboard.js](https://github.com/zenorocha/clipboard.js) - Modern copy to clipboard. No Flash. Just 3kb gzipped.
+* ~~[Sassy-Gridlover](https://github.com/hiulit/Sassy-Gridlover) - Super easy to use Sass mixins to establish a typographic system with modular scale and vertical rhythm.~~
+* ~~[Sass Vegan Burger](https://github.com/hiulit/sass-burger) - A Sass mixin for creating (100% vegan) hamburger icons.~~
+* ~~[Stacktable](https://github.com/johnpolacek/stacktable.js) - jQuery plugin for stacking tables on small screens.~~
+* ~~[clipboard.js](https://github.com/zenorocha/clipboard.js) - Modern copy to clipboard. No Flash. Just 3kb gzipped.~~
 * [Material Palette](http://www.materialpalette.com/teal/green) - Material design color palette generator.
 
 */
@@ -141,7 +143,7 @@ Mad propz to all the great people behind the software listed below.
 /*
 # Author
 
-* [Xavier Gomez](https://github.com/hiulit) ([@hiulit](https://twitter.com/hiulit)).
+* [Xavier Gómez Gosálbez](https://github.com/hiulit) ([@hiulit](https://twitter.com/hiulit)).
 
 */
 
@@ -158,22 +160,32 @@ Mad propz to this guy:
 # Credits
 
 * [Thomas Davis](http://thomasdavis.github.com) - For creating the amazing [Kalei - Living Style Guide](https://github.com/thomasdavis/kaleistyleguide). Phytoplankton is a highly modified fork of this project, but a fork nonetheless.
-
 * [Jacob Rask](https://github.com/jacobrask) - For creating the amazing [StyleDocco](https://github.com/jacobrask/styledocco). And also for open sourcing the project and letting me (and surely others) be able to implement some of his ideas, critical to Phytoplankton.
 
 */
 
 /*
-# Unlicense
+# License
 
-This is free and unencumbered software released into the public domain.
+MIT License
 
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software, either in source code form or as a compiled binary, for any purpose, commercial or non-commercial, and by any means.
+Copyright (c) 2017 Xavier Gómez Gosálbez
 
-In jurisdictions that recognize copyright laws, the author or authors of this software dedicate any and all copyright interest in the software to the public domain. We make this dedication for the benefit of the public at large and to the detriment of our heirs and successors. We intend this dedication to be an overt act of relinquishment in perpetuity of all present and future rights to this software under copyright law.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-For more information, please refer to http://unlicense.org/
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 */
