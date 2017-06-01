@@ -24,11 +24,7 @@
         </div>
         <div class="phytoplankton-page js-phytoplankton-page">
             <!-- <div class="phytoplankton-page__item" v-html="compiledMarkdown"></div> -->
-            <page-item
-                v-for="block in blocks"
-                v-bind:page="block"
-                v-bind:key="block.id">
-            </page-item>
+            <div class="phytoplankton-page__item" v-for="block in blocks" v-html="block.docs"></div>
         </div>
     </div>
 

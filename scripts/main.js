@@ -47,18 +47,6 @@ var menu = new Vue({
   }
 })
 
-Vue.component('page-item', {
-  props: ['page'],
-  template: '<div class="phytoplankton-page__item">'+
-              '{{ page.docs }}' +
-              '{{ page.code }}' +
-            '</div>',
-  // data: {
-  // },
-  // methods: {
-  // }
-});
-
 var page = new Vue({
   el: '.js-phytoplankton-page',
   data: {
@@ -69,6 +57,15 @@ var page = new Vue({
   },
   methods: {
     loadFile: function() {
+      // Resets
+      page.docs = '';
+      page.blocks = [];
+      var cssArray = [];
+      var styles = document.body.querySelectorAll('style');
+      for (var i = 0, lengthStyles = styles.length; i < lengthStyles; i++) {
+        styles[i].parentNode.removeChild(styles[i]);
+      }
+
       this.docs = 'Requesting ...';
       var rq = new XMLHttpRequest();
 
@@ -76,67 +73,66 @@ var page = new Vue({
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
             var items = separate(this.responseText);
-            // Resets
-            page.docs = '';
-            page.blocks = [];
 
-            for (var i = 0, length = items.length; i < length; i++) {
-              page.docs += items[i].docs;
-              page.code += items[i].code;
-
+            for (var i = 0, lengthItems = items.length; i < lengthItems; i++) {
+              var tokens = marked.lexer(items[i].docs);
+              var links = tokens.links || {};
               var block = {
-                docs: items[i].docs,
-                code: items[i].code
+                docs: [],
+                code: ''
               };
+
+              block.code = items[i].code;
+
+              for (var j = 0, lengthTokens = tokens.length; j < lengthTokens; j++) {
+                switch (tokens[j].type) {
+                  case 'code':
+                    if (!tokens[j].lang) {
+                      block.docs.push(tokens[j]);
+                    } else if (tokens[j].lang === 'markup') {
+                      block.docs.push({
+                        type: 'html',
+                        lang: 'markup',
+                        text: '<ul class="phytoplankton-tabs">' +
+                              '<li class="phytoplankton-tabs__item is-active">HTML</li>' +
+                              '</ul>' +
+                              '<div class="code-render clearfix">' + tokens[j].text + '</div>'
+                      });
+                    }
+                  break;
+                  default:
+                    block.docs.push(tokens[j]);
+                  break;
+                }
+              }
+
+              block.docs.links = links;
+              block.docs = marked.parser(block.docs);
               page.blocks.push(block);
 
-              // parsedCSS = gonzales.parse(items[i].code);
-              // parsedCSS = parsedCSS.content;
-              // for (var j = 0, csslength = parsedCSS.length; j < csslength; j++) {
-              //   if (parsedCSS[j].type === 'ruleset') {
-              //     var ruleset = parsedCSS[j].toString();
-              //     cssArray.push('.code-render ' + ruleset);
-              //   }
-              // }
-
-            };
-
-            console.log(page.blocks);
-
-            var tokens = marked.lexer(page.docs);
-            var links = tokens.links || {};
-            var block = {
-              docs: [],
-              code: []
-            };
-
-            for (var i = 0, length = tokens.length; i < length; i++) {
-              switch (tokens[i].type) {
-                case 'code':
-                  if (!tokens[i].lang) {
-                    block.docs.push(tokens[i]);
-                  } else if (tokens[i].lang === 'markup') {
-                    block.docs.push({
-                      type: 'html',
-                      lang: 'markup',
-                      text: '<ul class="phytoplankton-tabs">' +
-                            '<li class="phytoplankton-tabs__item is-active">HTML</li>' +
-                            '</ul>' +
-                            '<div class="code-render clearfix">' + tokens[i].text + '</div>'
-                    });
-                  }
-                break;
-                default:
-                  block.docs.push(tokens[i]);
-                break;
+              var parsedCSS = gonzales.parse(items[i].code);
+              parsedCSS = parsedCSS.content;
+              for (var k = 0, csslength = parsedCSS.length; k < csslength; k++) {
+                if (parsedCSS[k].type === 'ruleset') {
+                  var ruleset = parsedCSS[k].toString();
+                  cssArray.push('.code-render ' + ruleset);
+                }
               }
+
+            };
+
+            if (cssArray.length) {
+              styles = document.createElement('style');
+              for (var l = 0, cssArraylength = cssArray.length; l < cssArraylength; l++) {
+                styles.appendChild(document.createTextNode(cssArray[l]));
+              }
+              document.body.appendChild(styles);
             }
-            block.docs.links = links;
-            block.docs = marked.parser(block.docs);
-            page.docs = block.docs;
+
+            // console.log(page.blocks);
           } else {
             page.docs = '**Request Failed!**\n\n' +
-                           'Either the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
+                        'Either the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
             page.docs = marked(page.docs);
           }
         }
@@ -157,7 +153,11 @@ var page = new Vue({
       // })
     }
   },
+  mounted: function () {
+    console.log('mounted');
+  },
   updated: function() { // "onReady function"
+    console.log('updated'); 
     var pre = document.getElementsByTagName('pre');
     for (var i = 0, length = pre.length; i < length; i++) {
       pre[i].classList.add('line-numbers');
