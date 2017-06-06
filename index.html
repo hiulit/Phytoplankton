@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="styles/css/kaleistyleguide.css">
     <link rel="stylesheet" href="styles/css/prism.css">
     <!-- <link rel="stylesheet" href="https://unpkg.com/normalize.css@7.0.0"> -->
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oxygen:400,700">
+    <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic"> -->
+    <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oxygen:400,700"> -->
 </head>
 <body>
     <div class="main">
@@ -22,9 +22,11 @@
                 </menu-item>
             </ul>
         </div>
+<!--         <div class="phytoplankton-page phytoplankton-page--loader js-phytoplankton-page--loader" v-if="seen">
+            {{ message }}
+        </div> -->
         <div class="phytoplankton-page js-phytoplankton-page">
             <!-- <div class="phytoplankton-page__item" v-html="compiledMarkdown"></div> -->
-            <div class="phytoplankton-page__loader js-phytoplankton-page__loader" v-if="seen">{{ message }}</div>
             <div class="phytoplankton-page__item" v-for="block in blocks" v-html="block.docs"></div>
         </div>
     </div>

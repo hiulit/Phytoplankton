@@ -41,13 +41,13 @@ var menu = new Vue({
   }
 })
 
-var loader = new Vue({
-  el: '.js-phytoplankton-page__loader',
-  data: {
-    message: 'Loading...',
-    seen: true
-  }
-});
+// var loader = new Vue({
+//   el: '.js-phytoplankton-page--loader',
+//   data: {
+//     message: 'Loading...',
+//     seen: true
+//   }
+// });
 
 var page = new Vue({
   el: '.js-phytoplankton-page',
@@ -57,43 +57,43 @@ var page = new Vue({
     code: '',
     blocks: []
   },
-  beforeCreate: function () {
-    console.log('beforeCreate');
-  },
-  created: function () {
-    console.log('created');
-  },
-  beforeMount: function () {
-    console.log('beforeMount');
-  },
+  // beforeCreate: function () {
+  //   console.log('beforeCreate');
+  // },
+  // created: function () {
+  //   console.log('created');
+  // },
+  // beforeMount: function () {
+  //   console.log('beforeMount');
+  // },
   mounted: function () {
-    console.log('mounted');
-    // Set first menu link's state to "active".
+    // console.log('mounted');
+    // // Set first menu link's state to "active".
     document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
-    // Set page URL to first menu item.
+    // // Set page URL to first menu item.
     this.url = config.menu[0].url[0];
-    // Load first file.
+    // // Load first file.
     this.loadFile();
   },
-  computed: {
-    computed: function () {
-      return  console.log('computed');
-    },
-    compiledMarkdown: function () {
-      return this.docs
-      // return marked(this.docs, {
-      //   sanitize: false,
-      //   gfm: true,
-      //   tables: true,
-      //   langPrefix: 'language-'
-      // })
-    }
-  },
-  beforeUpdate: function () {
-    console.log('beforeUpdate');
-  },
+  // computed: {
+  //   computed: function () {
+  //     return  console.log('computed');
+  //   },
+  //   compiledMarkdown: function () {
+  //     return this.docs
+  //     // return marked(this.docs, {
+  //     //   sanitize: false,
+  //     //   gfm: true,
+  //     //   tables: true,
+  //     //   langPrefix: 'language-'
+  //     // })
+  //   }
+  // },
+  // beforeUpdate: function () {
+  //   console.log('beforeUpdate');
+  // },
   updated: function () { // "onReady function"
-    console.log('updated');
+    // console.log('updated');
     var pre = document.getElementsByTagName('pre');
     for (var i = 0, length = pre.length; i < length; i++) {
       pre[i].classList.add('line-numbers');
@@ -123,18 +123,18 @@ var page = new Vue({
       offset: 49
     });
   },
-  activated: function () {
-    console.log('activated');
-  },
-  deactivated: function () {
-    console.log('deactivated');
-  },
-  beforeDestroy: function () {
-    console.log('beforeDestroy');
-  },
-  destroyed: function () {
-    console.log('destroyed');
-  },
+  // activated: function () {
+  //   console.log('activated');
+  // },
+  // deactivated: function () {
+  //   console.log('deactivated');
+  // },
+  // beforeDestroy: function () {
+  //   console.log('beforeDestroy');
+  // },
+  // destroyed: function () {
+  //   console.log('destroyed');
+  // },
   methods: {
     loadFile: function() {
       // Resets
@@ -207,11 +207,10 @@ var page = new Vue({
               document.body.appendChild(styles);
             }
 
-            loader.seen = false;
           } else {
-            loader.message = '**Request Failed!**\n\n' +
-                        'Either the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
-            loader.message = marked(loader.message);
+            return
+            // loader.message = '**Request Failed!**\n\nEither the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
+            // loader.message = marked(loader.message);
           }
         }
       }.bind(rq, this);
