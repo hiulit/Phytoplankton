@@ -1,9 +1,3 @@
-// var lala = separate('/* # adeu bon dia \n hola com va? \n > quote*/ \n .hola {color: red;}');
-// var docs = lala[0].docs;
-// var css = lala[0].code;
-
-// var parse = gonzales.parse(css);
-
 Vue.component('menu-item', {
   props: ['menu'],
   template: '<li class="phytoplankton-menu__list__item">' +
@@ -47,6 +41,14 @@ var menu = new Vue({
   }
 })
 
+var loader = new Vue({
+  el: '.js-phytoplankton-page__loader',
+  data: {
+    message: 'Loading...',
+    seen: true
+  }
+});
+
 var page = new Vue({
   el: '.js-phytoplankton-page',
   data: {
@@ -55,18 +57,94 @@ var page = new Vue({
     code: '',
     blocks: []
   },
+  beforeCreate: function () {
+    console.log('beforeCreate');
+  },
+  created: function () {
+    console.log('created');
+  },
+  beforeMount: function () {
+    console.log('beforeMount');
+  },
+  mounted: function () {
+    console.log('mounted');
+    // Set first menu link's state to "active".
+    document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
+    // Set page URL to first menu item.
+    this.url = config.menu[0].url[0];
+    // Load first file.
+    this.loadFile();
+  },
+  computed: {
+    computed: function () {
+      return  console.log('computed');
+    },
+    compiledMarkdown: function () {
+      return this.docs
+      // return marked(this.docs, {
+      //   sanitize: false,
+      //   gfm: true,
+      //   tables: true,
+      //   langPrefix: 'language-'
+      // })
+    }
+  },
+  beforeUpdate: function () {
+    console.log('beforeUpdate');
+  },
+  updated: function () { // "onReady function"
+    console.log('updated');
+    var pre = document.getElementsByTagName('pre');
+    for (var i = 0, length = pre.length; i < length; i++) {
+      pre[i].classList.add('line-numbers');
+    }
+
+    var headings = document.querySelectorAll('h1');
+    var submenu = document.createElement('ul');
+    submenu.setAttribute('data-gumshoe', '');
+    for (var i = 0, length = headings.length; i < length; i++) {
+      var submenuItem = document.createElement('li');
+      var submenuItemAnchor = document.createElement('a');
+      submenuItem.appendChild(submenuItemAnchor);
+      submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
+      submenuItemAnchor.setAttribute('data-scroll', '');
+      submenuItemAnchor.appendChild(document.createTextNode(headings[i].innerText));
+      submenu.appendChild(submenuItem);
+    }
+    document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(submenu);
+
+    Prism.highlightAll();
+    Prism.fileHighlight();
+    fixie.init();
+    smoothScroll.init({
+      offset: 48
+    });
+    gumshoe.init({
+      offset: 49
+    });
+  },
+  activated: function () {
+    console.log('activated');
+  },
+  deactivated: function () {
+    console.log('deactivated');
+  },
+  beforeDestroy: function () {
+    console.log('beforeDestroy');
+  },
+  destroyed: function () {
+    console.log('destroyed');
+  },
   methods: {
     loadFile: function() {
       // Resets
-      page.docs = '';
-      page.blocks = [];
+      this.blocks = [];
       var cssArray = [];
       var styles = document.body.querySelectorAll('style');
       for (var i = 0, lengthStyles = styles.length; i < lengthStyles; i++) {
         styles[i].parentNode.removeChild(styles[i]);
       }
 
-      this.docs = 'Requesting ...';
       var rq = new XMLHttpRequest();
 
       rq.onreadystatechange = function(page) {
@@ -129,11 +207,11 @@ var page = new Vue({
               document.body.appendChild(styles);
             }
 
-            // console.log(page.blocks);
+            loader.seen = false;
           } else {
-            page.docs = '**Request Failed!**\n\n' +
+            loader.message = '**Request Failed!**\n\n' +
                         'Either the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
-            page.docs = marked(page.docs);
+            loader.message = marked(loader.message);
           }
         }
       }.bind(rq, this);
@@ -141,57 +219,5 @@ var page = new Vue({
       rq.open("GET", this.url);
       rq.send();
     }
-  },
-  computed: {
-    compiledMarkdown: function() {
-      return this.docs
-      // return marked(this.docs, {
-      //   sanitize: false,
-      //   gfm: true,
-      //   tables: true,
-      //   langPrefix: 'language-'
-      // })
-    }
-  },
-  mounted: function () {
-    console.log('mounted');
-  },
-  updated: function() { // "onReady function"
-    console.log('updated'); 
-    var pre = document.getElementsByTagName('pre');
-    for (var i = 0, length = pre.length; i < length; i++) {
-      pre[i].classList.add('line-numbers');
-    }
-
-    var headings = document.querySelectorAll('h1');
-    var submenu = document.createElement('ul');
-    submenu.setAttribute('data-gumshoe', '');
-    for (var i = 0, length = headings.length; i < length; i++) {
-      var submenuItem = document.createElement('li');
-      var submenuItemAnchor = document.createElement('a');
-      submenuItem.appendChild(submenuItemAnchor);
-      submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
-      submenuItemAnchor.setAttribute('data-scroll', '');
-      submenuItemAnchor.appendChild(document.createTextNode(headings[i].innerText));
-      submenu.appendChild(submenuItem);
-    }
-    document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(submenu);
-
-    Prism.highlightAll();
-    Prism.fileHighlight();
-    fixie.init();
-    smoothScroll.init({
-      offset: 48
-    });
-    gumshoe.init({
-      offset: 49
-    });
   }
 })
-
-// Set first menu link's state to "active".
-document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
-// Set page URL to first menu item.
-page.url = config.menu[0].url[0];
-// Load first file.
-page.loadFile();
