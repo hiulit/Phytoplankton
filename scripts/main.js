@@ -99,6 +99,10 @@ var page = new Vue({
       pre[i].classList.add('line-numbers');
     }
 
+    getFiles('scripts/', function(filesArray) {
+      console.log(filesArray);
+    });
+
     var headings = document.querySelectorAll('h1');
     var submenu = document.createElement('ul');
     submenu.setAttribute('data-gumshoe', '');
@@ -140,9 +144,12 @@ var page = new Vue({
       // Resets
       this.blocks = [];
       var cssArray = [];
-      var styles = document.body.querySelectorAll('style');
-      for (var i = 0, lengthStyles = styles.length; i < lengthStyles; i++) {
-        styles[i].parentNode.removeChild(styles[i]);
+
+      var styles = document.head.querySelectorAll('style');
+      if (styles.length) {
+        for (var i = 0, lengthStyles = styles.length; i < lengthStyles; i++) {
+          styles[i].parentNode.removeChild(styles[i]);
+        }
       }
 
       var rq = new XMLHttpRequest();
@@ -150,17 +157,25 @@ var page = new Vue({
       rq.onreadystatechange = function(page) {
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
-            var items = separate(this.responseText);
+            var blocks = separate(this.responseText);
 
-            for (var i = 0, lengthItems = items.length; i < lengthItems; i++) {
-              var tokens = marked.lexer(items[i].docs);
+            for (var i = 0, lengthBlocks = blocks.length; i < lengthBlocks; i++) {
+              var tokens = marked.lexer(blocks[i].docs);
               var links = tokens.links || {};
               var block = {
                 docs: [],
                 code: ''
               };
 
-              block.code = items[i].code;
+              block.code = blocks[i].code;
+              var parsedCSS = gonzales.parse(block.code);
+              parsedCSS = parsedCSS.content;
+              for (var k = 0, lengthCss = parsedCSS.length; k < lengthCss; k++) {
+                if (parsedCSS[k].type === 'ruleset') {
+                  var ruleset = parsedCSS[k].toString();
+                  cssArray.push('.code-render ' + ruleset);
+                }
+              }
 
               for (var j = 0, lengthTokens = tokens.length; j < lengthTokens; j++) {
                 switch (tokens[j].type) {
@@ -187,26 +202,15 @@ var page = new Vue({
               block.docs.links = links;
               block.docs = marked.parser(block.docs);
               page.blocks.push(block);
-
-              var parsedCSS = gonzales.parse(items[i].code);
-              parsedCSS = parsedCSS.content;
-              for (var k = 0, csslength = parsedCSS.length; k < csslength; k++) {
-                if (parsedCSS[k].type === 'ruleset') {
-                  var ruleset = parsedCSS[k].toString();
-                  cssArray.push('.code-render ' + ruleset);
-                }
-              }
-
             };
 
             if (cssArray.length) {
               styles = document.createElement('style');
-              for (var l = 0, cssArraylength = cssArray.length; l < cssArraylength; l++) {
+              for (var l = 0, lengthCssArray = cssArray.length; l < lengthCssArray; l++) {
                 styles.appendChild(document.createTextNode(cssArray[l]));
               }
-              document.body.appendChild(styles);
+              document.head.appendChild(styles);
             }
-
           } else {
             return
             // loader.message = '**Request Failed!**\n\nEither the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
