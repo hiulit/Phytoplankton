@@ -60,9 +60,11 @@ var page = new Vue({
   // beforeCreate: function () {
   //   console.log('beforeCreate');
   // },
-  // created: function () {
-  //   console.log('created');
-  // },
+  created: function () {
+    console.log('created');
+    var files = getFiles('scripts/');
+    console.log(files);
+  },
   // beforeMount: function () {
   //   console.log('beforeMount');
   // },
@@ -98,10 +100,6 @@ var page = new Vue({
     for (var i = 0, length = pre.length; i < length; i++) {
       pre[i].classList.add('line-numbers');
     }
-
-    getFiles('scripts/', function(filesArray) {
-      console.log(filesArray);
-    });
 
     var headings = document.querySelectorAll('h1');
     var submenu = document.createElement('ul');
