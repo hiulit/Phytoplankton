@@ -1,4 +1,4 @@
-function getFiles(dirPath, callback) { // dirPath must end with "/".
+function getFiles(dirPath) { // dirPath must end with "/".
   var filesArray = filesArray || [];
   var request = new XMLHttpRequest();
   request.open('GET', dirPath, true);
@@ -17,17 +17,13 @@ function getFiles(dirPath, callback) { // dirPath must end with "/".
         newDirPath = dirPath + dataUrl;
 
         if (dataUrl.slice(-1) === '/') {
-          // getFiles(newDirPath, filesArray);
-          getFiles(newDirPath, function(filesArray) {
-            console.log(filesArray);
-          });
+          filesArray = filesArray.concat(getFiles(newDirPath));
         } else {
           filesArray.push(newDirPath);
         }
       };
 
-      if (typeof callback === 'function') callback(filesArray);
-      // return filesArray;
+      return filesArray;
     } else {
       // We reached our target server, but it returned an error
     }
