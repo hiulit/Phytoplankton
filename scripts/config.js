@@ -13,6 +13,12 @@ var config = {
       ]
     },
       {
+      title: 'Preprocessors',
+      url: [
+        'stylus.styl'
+      ]
+    },
+      {
       title: 'Plugins',
       url: [
         'fixie.css',

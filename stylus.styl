@@ -1,0 +1,33 @@
+/*
+# Stylus example
+
+Here you have a little example to see [Stylus](http://stylus-lang.com/try.html) working in the browser.
+
+```markup
+<h1 id="header" class="fixie"></h1>
+<div class="main">
+	<ul class="fixie">
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+<p class="fixie"></p>
+```
+
+ */
+
+$nice-red = red
+$light-red = $nice-red + #555
+
+$base = 5%
+$filler = $base * 2
+$other = $base + $filler
+
+#header
+	color: $nice-red
+
+p
+	background-color: $light-red
+	padding: (100% / 50 + $filler)

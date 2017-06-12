@@ -57,19 +57,25 @@ var page = new Vue({
     code: '',
     blocks: []
   },
-  // beforeCreate: function () {
-  //   console.log('beforeCreate');
-  // },
+  beforeCreate: function () {
+    console.log('beforeCreate');
+  },
   created: function () {
     console.log('created');
-    var files = getFiles('scripts/');
-    console.log(files);
+    $.ajax({
+        url: 'main.styl',
+        async: false,
+        cache: true,
+        success: function(data){
+            allImports = findImports(data, 'http://localhost:8080/Phytoplankton/', 'styl');
+        }
+    });
   },
-  // beforeMount: function () {
-  //   console.log('beforeMount');
-  // },
+  beforeMount: function () {
+    console.log('beforeMount');
+  },
   mounted: function () {
-    // console.log('mounted');
+    console.log('mounted');
     // // Set first menu link's state to "active".
     document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
     // // Set page URL to first menu item.
@@ -91,11 +97,11 @@ var page = new Vue({
   //     // })
   //   }
   // },
-  // beforeUpdate: function () {
-  //   console.log('beforeUpdate');
-  // },
+  beforeUpdate: function () {
+    console.log('beforeUpdate');
+  },
   updated: function () { // "onReady function"
-    // console.log('updated');
+    console.log('updated');
     var pre = document.getElementsByTagName('pre');
     for (var i = 0, length = pre.length; i < length; i++) {
       pre[i].classList.add('line-numbers');
@@ -165,15 +171,18 @@ var page = new Vue({
                 code: ''
               };
 
-              block.code = blocks[i].code;
-              var parsedCSS = gonzales.parse(block.code);
-              parsedCSS = parsedCSS.content;
-              for (var k = 0, lengthCss = parsedCSS.length; k < lengthCss; k++) {
-                if (parsedCSS[k].type === 'ruleset') {
-                  var ruleset = parsedCSS[k].toString();
-                  cssArray.push('.code-render ' + ruleset);
-                }
+              var cleanCode = removeComments(blocks[i].code);
+              if (cleanCode !== '') {
+                block.code = computeCss(cleanCode);
               }
+              // var parsedCSS = gonzales.parse(block.code);
+              // parsedCSS = parsedCSS.content;
+              // for (var k = 0, lengthCss = parsedCSS.length; k < lengthCss; k++) {
+              //   if (parsedCSS[k].type === 'ruleset') {
+              //     var ruleset = parsedCSS[k].toString();
+              //     cssArray.push('.code-render ' + ruleset);
+              //   }
+              // }
 
               for (var j = 0, lengthTokens = tokens.length; j < lengthTokens; j++) {
                 switch (tokens[j].type) {
@@ -202,13 +211,13 @@ var page = new Vue({
               page.blocks.push(block);
             };
 
-            if (cssArray.length) {
-              styles = document.createElement('style');
-              for (var l = 0, lengthCssArray = cssArray.length; l < lengthCssArray; l++) {
-                styles.appendChild(document.createTextNode(cssArray[l]));
-              }
-              document.head.appendChild(styles);
-            }
+            // if (cssArray.length) {
+            //   styles = document.createElement('style');
+            //   for (var l = 0, lengthCssArray = cssArray.length; l < lengthCssArray; l++) {
+            //     styles.appendChild(document.createTextNode(cssArray[l]));
+            //   }
+            //   document.head.appendChild(styles);
+            // }
           } else {
             return
             // loader.message = '**Request Failed!**\n\nEither the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
