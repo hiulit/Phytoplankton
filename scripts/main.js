@@ -107,26 +107,92 @@ var page = new Vue({
       pre[i].classList.add('line-numbers');
     }
 
-    var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    var submenu = document.createElement('ul');
-    submenu.setAttribute('data-gumshoe', '');
-    for (var i = 0, length = headings.length; i < length; i++) {
-      var submenuItem = document.createElement('li');
-      var submenuItemAnchor = document.createElement('a');
-      submenuItem.appendChild(submenuItemAnchor);
-      submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
-      submenuItemAnchor.setAttribute('data-scroll', '');
-      submenuItemAnchor.appendChild(document.createTextNode(headings[i].textContent));
-      if (headings[i].tagName !== 'H1') {
-        var submenuList = document.createElement('ul');
-        submenuList.appendChild(submenuItem);
-        submenu.lastChild.appendChild(submenuList);
-        console.log(submenu);
-      } else {
-        submenu.appendChild(submenuItem);
-      }
+    function createRepresentationFromHeadings(headings) {
+        let i = 0;
+        const tags = [];
+        
+        (function recurse(depth) {
+            let unclosedLi = false;
+            while (i < headings.length) {
+                const [hashes, data] = headings[i].split("# ");
+                if (hashes.length < depth) {
+                    break;
+                } else if (hashes.length === depth) {
+                    if (unclosedLi) tags.push('</li>');
+                    unclosedLi = true;
+                    tags.push('<li>', data);
+                    i++;
+                } else {
+                    tags.push('<ul>');
+                    recurse(depth+1);
+                    tags.push('</ul>');
+                }
+            }
+            if (unclosedLi) tags.push('</li>');
+        })(-1);
+        return tags.join('\n');
     }
-    document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(submenu);
+
+    var headings = [
+        "# Getting Started",
+        "# Heading 1",
+        "## SubHeading 1",
+        "## SubHeading 2",
+        "### SubSubHeading 1",
+        "### SubSubHeading 2",
+        "#### SubSubSubHeading 1",
+        "## SubHeading 3",
+    ];
+
+    // var hola = createRepresentationFromHeadings(headings);
+    // console.log(hola);
+
+    var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    console.log(headings);
+    function createMenu() {
+      var i = 0;
+      var submenu = document.createElement('ul');
+      submenu.setAttribute('data-gumshoe', '');
+      (function recurse(depth) {
+        while(i < headings.length) {
+          var hash = headings[i];
+          hash = hash.tagName.split('H');
+          hash = Number(hash[1]);
+          var submenuItem = document.createElement('li');
+          var submenuItemAnchor = document.createElement('a');
+          submenuItem.appendChild(submenuItemAnchor);
+          submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
+          submenuItemAnchor.setAttribute('data-scroll', '');
+          submenuItemAnchor.appendChild(document.createTextNode(headings[i].textContent));
+          if (hash > 1) {
+            if (hash !== depth) {
+              if (submenu.lastChild.tagName === 'LI') {
+                console.log(headings[i]);
+              }
+              var submenuList = document.createElement('ul');
+              submenuList.appendChild(submenuItem);
+              console.log('hash: ' + hash, 'depth: ' + depth, headings[i].id);
+              submenu.lastChild.appendChild(submenuList);
+              depth = hash;
+            } else {
+              // console.log('hash: ' + hash, 'depth: ' + depth, headings[i].id);
+              submenuList.lastChild.parentNode.appendChild(submenuItem);
+            }
+          } else {
+            depth = hash;
+            submenu.appendChild(submenuItem);
+            // console.log('hash: ' + hash, 'depth: ' + depth, headings[i].id);
+            i++;
+            recurse(hash);
+          }
+          i++
+        }
+      })(1);
+      return submenu;
+    }
+    var menuCreated = createMenu(headings);
+    // console.log(menuCreated);
+    document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(menuCreated);
 
     Prism.highlightAll();
     Prism.fileHighlight();
