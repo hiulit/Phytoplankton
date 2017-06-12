@@ -107,7 +107,7 @@ var page = new Vue({
       pre[i].classList.add('line-numbers');
     }
 
-    var headings = document.querySelectorAll('h1');
+    var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     var submenu = document.createElement('ul');
     submenu.setAttribute('data-gumshoe', '');
     for (var i = 0, length = headings.length; i < length; i++) {
@@ -116,8 +116,15 @@ var page = new Vue({
       submenuItem.appendChild(submenuItemAnchor);
       submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
       submenuItemAnchor.setAttribute('data-scroll', '');
-      submenuItemAnchor.appendChild(document.createTextNode(headings[i].innerText));
-      submenu.appendChild(submenuItem);
+      submenuItemAnchor.appendChild(document.createTextNode(headings[i].textContent));
+      if (headings[i].tagName !== 'H1') {
+        var submenuList = document.createElement('ul');
+        submenuList.appendChild(submenuItem);
+        submenu.lastChild.appendChild(submenuList);
+        console.log(submenu);
+      } else {
+        submenu.appendChild(submenuItem);
+      }
     }
     document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(submenu);
 
