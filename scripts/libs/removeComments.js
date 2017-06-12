@@ -1,11 +1,11 @@
-var removeComments = function(stylesheet) {
+var removeComments = function(str) {
   // Remove comments.
-  // stylesheet = stylesheet.replace(/(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*?\*\/)/g, '');
-  stylesheet = stylesheet.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '');
+  // str = str.replace(/(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*?\*\/)/g, '');
+  str = str.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '');
   // Trim leading and trailing.
-  stylesheet = stylesheet.replace(/((^\s+|\s+$))/g,'');
+  str = str.replace(/((^\s+|\s+$))/g,'');
   // Remove extra line breaks.
-  stylesheet = stylesheet.replace(/(\n\s*\n)/g, '\n\n');
+  str = str.replace(/(\n\s*\n)/g, '\n\n');
 
-  return stylesheet;
+  return str;
 }

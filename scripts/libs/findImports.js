@@ -1,11 +1,11 @@
-var find_imports = function(str, basepath, styleExt) {
+var findImports = function(str, basepath, styleExt) {
   var finalCss = finalCss || [];
   var regex = /(?:(?![\/*]])[^\/* ]|^ *)@import ['"](.*?)['"](?![^*]*?\*\/)/g;
   var match, matches = [];
-  var matchFileImport = "";
+  var matchFileImport = '';
   var matchesFileImport = [];
 
-  str = that.remove_comments(str);
+  str = removeComments(str);
 
   while ((match = regex.exec(str)) !== null) {
     matchFileImport = match["input"];
@@ -13,16 +13,16 @@ var find_imports = function(str, basepath, styleExt) {
     matches.push(match[1]);
   }
 
-  _.each(matchesFileImport, function(match) {
+  matchesFileImport.forEach(function(match) {
     // Code other than "@import" goes here.
     if (styleExt == "scss" || styleExt == "sass" || styleExt == "less") {
-      matchFileImport = matchFileImport.replace(match + ";", "");
+      matchFileImport = matchFileImport.replace(match + ";", '');
     } else if (styleExt == "styl" || styleExt == "stylus") {
-      matchFileImport = matchFileImport.replace(match, "");
+      matchFileImport = matchFileImport.replace(match, '');
     }
   });
 
-  _.each(matches, function(match) {
+  matches.forEach(function(match) {
     // Check if it's a filename
     var path = match.split('/');
     var filename, fullpath, _basepath = basepath;
@@ -45,19 +45,19 @@ var find_imports = function(str, basepath, styleExt) {
     }
     if (filename === "*") {
       // Removes "*" from filename.
-      filename = "";
+      filename = '';
       var files;
-      files = that.get_files(_basepath + '/' + filename);
+      files = getFiles(_basepath + '/' + filename);
       if (files.length) {
-        _.each(files, function(file) {
+        files.forEach(function(file) {
           $.ajax({
             url: file,
             async: false,
             cache: true,
             success: function(data){
-              var separate = that.separate(data);
-              _.each(separate, function(css){
-                css.code = that.remove_comments(css.code);
+              var separateFile = separate(data);
+              separateFile.forEach(function(css){
+                css.code = removeComments(css.code);
                 finalCss.push(css.code + "\n\n");
               });
             }
@@ -72,7 +72,7 @@ var find_imports = function(str, basepath, styleExt) {
         filename = filename + '.' + styleExt;
       }
     }
-    if (filename != "") {
+    if (filename != '') {
       fullpath = _basepath + '/' + filename;
       var importContent = fullpath;
       var files;
@@ -81,36 +81,36 @@ var find_imports = function(str, basepath, styleExt) {
         async: false,
         cache: true,
         success: function(data){
-          files = that.find_imports(data, _basepath, styleExt);
+          files = findImports(data, _basepath, styleExt);
           if (files.length) {
-            _.each(files, function(file) {
-              var separate = that.separate(file);
-              _.each(separate, function(css){
-                css.code = that.remove_comments(css.code);
+            files.forEach(function(file) {
+              var separateFile = separate(file);
+              separateFile.forEach(function(css) {
+                css.code = removeComments(css.code);
                 finalCss.push(css.code + "\n\n");
               });
             });
           }
 
-          var matchFileImportChild = "";
+          var matchFileImportChild = '';
           var matchesFileImportChild = [];
 
           while ((match = regex.exec(data)) !== null) {
             matchFileImportChild = match["input"];
             matchesFileImportChild.push(match[0]);
           }
-          _.each(matchesFileImportChild, function(match) {
+          matchesFileImportChild.forEach(function(match) {
             // Code other than "@import" goes here.
             if (styleExt == "scss" || styleExt == "sass" || styleExt == "less") {
-              data = data.replace(match + ";", "");
+              data = data.replace(match + ";", '');
             } else if (styleExt == "styl" || styleExt == "stylus") {
-              data = data.replace(match, "");
+              data = data.replace(match, '');
             }
           });
 
-          var separate = that.separate(data);
-          _.each(separate, function(css){
-            css.code = that.remove_comments(css.code);
+          var separateFile = separate(data);
+          separateFile.forEach(function(css){
+            css.code = removeComments(css.code);
             finalCss.push(css.code + "\n\n");
           });
         }
@@ -119,7 +119,7 @@ var find_imports = function(str, basepath, styleExt) {
   });
 
   // Adds code other than "@import"
-  matchFileImport = that.remove_comments(matchFileImport);
+  matchFileImport = removeComments(matchFileImport);
   finalCss.unshift(matchFileImport);
 
   return finalCss;
