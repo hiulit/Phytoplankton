@@ -166,22 +166,24 @@ var page = new Vue({
           submenuItemAnchor.appendChild(document.createTextNode(headings[i].textContent));
           if (hash > 1) {
             if (hash !== depth) {
-              if (submenu.lastChild.tagName === 'LI') {
-                console.log(headings[i]);
+              if (submenuList) {
+                console.log(submenuList);
+                var newSubmenuList = document.createElement('ul');
+                newSubmenuList.appendChild(submenuItem);
+                submenuList.lastChild.appendChild(newSubmenuList);
+              } else {
+                var submenuList = document.createElement('ul');
+                submenuList.appendChild(submenuItem);
+                submenu.lastChild.appendChild(submenuList);
+                depth = hash;
               }
-              var submenuList = document.createElement('ul');
-              submenuList.appendChild(submenuItem);
-              console.log('hash: ' + hash, 'depth: ' + depth, headings[i].id);
-              submenu.lastChild.appendChild(submenuList);
-              depth = hash;
             } else {
-              // console.log('hash: ' + hash, 'depth: ' + depth, headings[i].id);
+              // console.log(submenuItem);
               submenuList.lastChild.parentNode.appendChild(submenuItem);
             }
           } else {
             depth = hash;
             submenu.appendChild(submenuItem);
-            // console.log('hash: ' + hash, 'depth: ' + depth, headings[i].id);
             i++;
             recurse(hash);
           }
@@ -220,7 +222,7 @@ var page = new Vue({
     loadFile: function() {
       // Resets
       this.blocks = [];
-      var cssArray = [];
+      // var cssArray = [];
 
       var styles = document.head.querySelectorAll('style');
       if (styles.length) {

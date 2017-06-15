@@ -30,3 +30,11 @@
 ul[data-gumshoe]:first-of-type {
 	display: none;
 }
+
+.phytoplankton-menu > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+	padding-left: 4rem;
+}
+
+.phytoplankton-menu > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+	padding-left: 5rem;
+}
