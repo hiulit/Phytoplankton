@@ -108,7 +108,7 @@ var page = new Vue({
       pre[i].classList.add('line-numbers');
     }
 
-    function createRepresentationFromHeadings(headings) {
+    function createMenu(headings) {
         let i = 0;
         const tags = [];
 
@@ -121,10 +121,17 @@ var page = new Vue({
                 } else if (hashes.length === depth) {
                     if (unclosedLi) tags.push('</li>');
                     unclosedLi = true;
-                    tags.push('<li>', data);
+                    var anchor = data.toLowerCase().trim().replace(/[^\w]+/g, '-');
+                    tags.push('<li>');
+                    tags.push('<a href="#' + anchor +'" data-scroll>', data.trim());
+                    tags.push('</a>');
                     i++;
                 } else {
-                    tags.push('<ul>');
+                    if (i === 0) {
+                        tags.push('<ul data-gumshoe>');
+                    } else {
+                        tags.push('<ul>');
+                    }
                     recurse(depth+1);
                     tags.push('</ul>');
                 }
@@ -134,10 +141,7 @@ var page = new Vue({
         return tags.join('');
     }
 
-    var hola = createRepresentationFromHeadings(page.headings);
-    console.log(hola);
-
-    $('[data-url="' + this.url + '"]').parent().append(hola);
+    $('[data-url="' + this.url + '"]').parent().append(createMenu(page.headings));
 
     Prism.highlightAll();
     Prism.fileHighlight();
@@ -163,9 +167,10 @@ var page = new Vue({
   // },
   methods: {
     loadFile: function() {
+
       // Resets
       this.blocks = [];
-      // var cssArray = [];
+      this.headings = [];
 
       var styles = document.head.querySelectorAll('style');
       if (styles.length) {
@@ -190,7 +195,7 @@ var page = new Vue({
               };
 
               var match;
-              var regex = /^(#{1,6}.*)/gm;
+              var regex = /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/gm;
               while ((match = regex.exec(blocks[i].docs)) !== null) {
                 page.headings.push(match[0]);
               }
@@ -199,14 +204,6 @@ var page = new Vue({
               if (cleanCode !== '') {
                 block.code = computeCss(cleanCode);
               }
-              // var parsedCSS = gonzales.parse(block.code);
-              // parsedCSS = parsedCSS.content;
-              // for (var k = 0, lengthCss = parsedCSS.length; k < lengthCss; k++) {
-              //   if (parsedCSS[k].type === 'ruleset') {
-              //     var ruleset = parsedCSS[k].toString();
-              //     cssArray.push('.code-render ' + ruleset);
-              //   }
-              // }
 
               for (var j = 0, lengthTokens = tokens.length; j < lengthTokens; j++) {
                 switch (tokens[j].type) {
@@ -233,15 +230,7 @@ var page = new Vue({
               block.docs.links = links;
               block.docs = marked.parser(block.docs);
               page.blocks.push(block);
-            };
-
-            // if (cssArray.length) {
-            //   styles = document.createElement('style');
-            //   for (var l = 0, lengthCssArray = cssArray.length; l < lengthCssArray; l++) {
-            //     styles.appendChild(document.createTextNode(cssArray[l]));
-            //   }
-            //   document.head.appendChild(styles);
-            // }
+            }
           } else {
             return
             // loader.message = '**Request Failed!**\n\nEither the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
