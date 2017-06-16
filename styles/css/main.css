@@ -27,9 +27,9 @@
 //   /* This is a "feature" that doesn't  come with the default plugin. */
 // }
 
-ul[data-gumshoe]:first-of-type {
-	display: none;
-}
+// ul[data-gumshoe]:first-of-type {
+// 	display: none;
+// }
 
 .phytoplankton-menu > ul > li > ul > li > ul > li > ul > li > ul > li > a {
 	padding-left: 4rem;

@@ -107,94 +107,126 @@ var page = new Vue({
       pre[i].classList.add('line-numbers');
     }
 
-    function createRepresentationFromHeadings(headings) {
-        let i = 0;
-        const tags = [];
+    // function createRepresentationFromHeadings(headings) {
+    //     let i = 0;
+    //     const tags = [];
         
-        (function recurse(depth) {
-            let unclosedLi = false;
-            while (i < headings.length) {
-                const [hashes, data] = headings[i].split("# ");
-                if (hashes.length < depth) {
-                    break;
-                } else if (hashes.length === depth) {
-                    if (unclosedLi) tags.push('</li>');
-                    unclosedLi = true;
-                    tags.push('<li>', data);
-                    i++;
-                } else {
-                    tags.push('<ul>');
-                    recurse(depth+1);
-                    tags.push('</ul>');
-                }
-            }
-            if (unclosedLi) tags.push('</li>');
-        })(-1);
-        return tags.join('\n');
-    }
+    //     (function recurse(depth) {
+    //         let unclosedLi = false;
+    //         while (i < headings.length) {
+    //             const [hashes, data] = headings[i].split("# ");
+    //             if (hashes.length < depth) {
+    //                 break;
+    //             } else if (hashes.length === depth) {
+    //                 if (unclosedLi) tags.push('</li>');
+    //                 unclosedLi = true;
+    //                 tags.push('<li>', data);
+    //                 i++;
+    //             } else {
+    //                 tags.push('<ul>');
+    //                 recurse(depth+1);
+    //                 tags.push('</ul>');
+    //             }
+    //         }
+    //         if (unclosedLi) tags.push('</li>');
+    //     })(-1);
+    //     return tags.join('\n');
+    // }
 
-    var headings = [
-        "# Getting Started",
-        "# Heading 1",
-        "## SubHeading 1",
-        "## SubHeading 2",
-        "### SubSubHeading 1",
-        "### SubSubHeading 2",
-        "#### SubSubSubHeading 1",
-        "## SubHeading 3",
-    ];
+    // var headings = [
+    //     "# Getting Started",
+    //     "# Heading 1",
+    //     "## SubHeading 1",
+    //     "## SubHeading 2",
+    //     "### SubSubHeading 1",
+    //     "### SubSubHeading 2",
+    //     "#### SubSubSubHeading 1",
+    //     "## SubHeading 3",
+    // ];
 
     // var hola = createRepresentationFromHeadings(headings);
     // console.log(hola);
 
-    var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    console.log(headings);
-    function createMenu() {
-      var i = 0;
-      var submenu = document.createElement('ul');
-      submenu.setAttribute('data-gumshoe', '');
-      (function recurse(depth) {
-        while(i < headings.length) {
-          var hash = headings[i];
-          hash = hash.tagName.split('H');
-          hash = Number(hash[1]);
-          var submenuItem = document.createElement('li');
-          var submenuItemAnchor = document.createElement('a');
-          submenuItem.appendChild(submenuItemAnchor);
-          submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
-          submenuItemAnchor.setAttribute('data-scroll', '');
-          submenuItemAnchor.appendChild(document.createTextNode(headings[i].textContent));
-          if (hash > 1) {
-            if (hash !== depth) {
-              if (submenuList) {
-                console.log(submenuList);
-                var newSubmenuList = document.createElement('ul');
-                newSubmenuList.appendChild(submenuItem);
-                submenuList.lastChild.appendChild(newSubmenuList);
-              } else {
-                var submenuList = document.createElement('ul');
-                submenuList.appendChild(submenuItem);
-                submenu.lastChild.appendChild(submenuList);
-                depth = hash;
-              }
-            } else {
-              // console.log(submenuItem);
-              submenuList.lastChild.parentNode.appendChild(submenuItem);
-            }
-          } else {
-            depth = hash;
-            submenu.appendChild(submenuItem);
-            i++;
-            recurse(hash);
-          }
-          i++
+    // var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    // console.log(headings);
+    // function createMenu() {
+    //   var i = 0;
+    //   var submenu = document.createElement('ul');
+    //   submenu.setAttribute('data-gumshoe', '');
+    //   (function recurse(depth) {
+    //     while(i < headings.length) {
+    //       var hash = headings[i];
+    //       hash = hash.tagName.split('H');
+    //       hash = Number(hash[1]);
+    //       var submenuItem = document.createElement('li');
+    //       var submenuItemAnchor = document.createElement('a');
+    //       submenuItem.appendChild(submenuItemAnchor);
+    //       submenuItemAnchor.setAttribute('href', '#' + headings[i].id);
+    //       submenuItemAnchor.setAttribute('data-scroll', '');
+    //       submenuItemAnchor.appendChild(document.createTextNode(headings[i].textContent));
+    //       if (hash > 1) {
+    //         if (hash !== depth) {
+    //           if (submenuList) {
+    //             console.log(submenuList);
+    //             var newSubmenuList = document.createElement('ul');
+    //             newSubmenuList.appendChild(submenuItem);
+    //             submenuList.lastChild.appendChild(newSubmenuList);
+    //           } else {
+    //             var submenuList = document.createElement('ul');
+    //             submenuList.appendChild(submenuItem);
+    //             submenu.lastChild.appendChild(submenuList);
+    //             depth = hash;
+    //           }
+    //         } else {
+    //           // console.log(submenuItem);
+    //           submenuList.lastChild.parentNode.appendChild(submenuItem);
+    //         }
+    //       } else {
+    //         depth = hash;
+    //         submenu.appendChild(submenuItem);
+    //         i++;
+    //         recurse(hash);
+    //       }
+    //       i++
+    //     }
+    //   })(1);
+    //   return submenu;
+    // }
+    // var menuCreated = createMenu(headings);
+
+    //Initialize the root UL
+    var ul = $('<ul data-gumshoe>');
+    for(var i = 1; i < 8; i++){
+        var hs = $('h' + i);
+        if(hs.length){
+            ul[0].childHeaders = hs
+            ul[0].childHeaderLevel = i;
+            break;
         }
-      })(1);
-      return submenu;
     }
-    var menuCreated = createMenu(headings);
-    // console.log(menuCreated);
-    document.querySelector('[data-url="' + this.url + '"]').parentNode.appendChild(menuCreated);
+
+    var rootUl = ul;
+    //main loop
+    while(ul.length){    
+        var nextUl = $();
+        //loop through each ul
+        ul.each(function(){
+             var innerUl = this;
+             var n = this.childHeaderLevel;
+             //turn each childHeader into the corresponding ul
+             innerUl.childHeaders.each(function(i,elem){
+                var childUl = $('<ul>').append('<li>' + $(elem).html() + '</li>')
+                                       .appendTo(innerUl);
+                childUl[0].childHeaders = $(this).nextUntil('h' + n)
+                                                 .filter('h' + (n+1));
+                childUl[0].childHeaderLevel = n + 1;            
+                nextUl = nextUl.add(childUl);
+           });                            
+        });
+        ul = nextUl;   
+    }
+
+    $('[data-url="' + this.url + '"]').parent().append(rootUl);
 
     Prism.highlightAll();
     Prism.fileHighlight();
