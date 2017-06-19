@@ -61,12 +61,14 @@ var page = new Vue({
   },
   created: function () {
     console.log('created');
+    var path = window.location.origin + window.location.pathname;
     $.ajax({
         url: 'main.styl',
         async: false,
         cache: true,
         success: function(data){
-            allImports = findImports(data, 'http://localhost:8080/Phytoplankton/', 'styl');
+            allImports = findImports(data, path, 'styl');
+            console.log(allImports);
         }
     });
   },
