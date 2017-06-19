@@ -53,8 +53,6 @@ var page = new Vue({
   el: '.js-phytoplankton-page',
   data: {
     url: '',
-    docs: '',
-    code: '',
     blocks: [],
     headings: []
   },
@@ -77,11 +75,11 @@ var page = new Vue({
   },
   mounted: function () {
     console.log('mounted');
-    // // Set first menu link's state to "active".
+    // Set first menu link's state to "active".
     document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
-    // // Set page URL to first menu item.
+    // Set page URL to first menu item.
     this.url = config.menu[0].url[0];
-    // // Load first file.
+    // Load first file.
     this.loadFile();
   },
   // computed: {
