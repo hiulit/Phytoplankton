@@ -11,25 +11,22 @@
     <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oxygen:400,700"> -->
 </head>
 <body>
-    <div class="main">
-        <!-- <div class="header js-header">header</div> -->
-        <div class="phytoplankton-menu js-phytoplankton-menu">
-            <ul class="phytoplankton-menu__list">
-                <menu-item
-                    v-for="item in items"
-                    v-bind:menu="item"
-                    v-bind:key="item.id">
-                </menu-item>
-            </ul>
-        </div>
-        <!-- <div class="phytoplankton-page phytoplankton-page--loader js-phytoplankton-page--loader" v-if="seen">
-            {{ message }}
-        </div> -->
-        <div class="phytoplankton-page js-phytoplankton-page">
-            <!-- <div class="phytoplankton-page__item" v-html="compiledMarkdown"></div> -->
-            <div class="phytoplankton-page__item" v-for="block in blocks" v-html="block.docs"></div>
-        </div>
-    </div>
+    <nav class="phytoplankton-menu js-phytoplankton-menu">
+        <ul class="phytoplankton-menu__list">
+            <menu-item
+                v-for="item in items"
+                v-bind:menu="item"
+                v-bind:key="item.id">
+            </menu-item>
+        </ul>
+    </nav>
+    <!-- <div class="phytoplankton-page phytoplankton-page--loader js-phytoplankton-page--loader" v-if="seen">
+        {{ message }}
+    </div> -->
+    <main class="phytoplankton-page js-phytoplankton-page">
+        <!-- <div class="phytoplankton-page__item" v-html="compiledMarkdown"></div> -->
+        <div class="phytoplankton-page__item" v-for="block in blocks" v-html="block.docs"></div>
+    </main>
 
     <script src="http://vuejs.org/js/vue.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
