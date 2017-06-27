@@ -15,20 +15,29 @@ Vue.component('menu-item', {
   methods: {
     goToFile: function(e) {
       if (page.url != e.target.dataset.url) {
-        var submenu = document.querySelectorAll('[data-gumshoe]');
-        for (var i = 0, length = submenu.length; i < length; i++) {
-          submenu[i].parentNode.removeChild(submenu[i]);
-        }
-        var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
-        for (var i = 0, length = menuArray.length; i < length; i++) {
-          menuArray[i].classList.remove('is-active');
-        }
-        e.target.classList.add('is-active');
-        page.url = e.target.dataset.url;
+        this.removeAllSubMenus();
+        this.removeAllActiveStateAndApplyActiveStateToCurrentElement(e);
+        this.setPageURLToCurrentElementURL(e);
         page.loadFile();
       } else {
         return;
       }
+    },
+    removeAllSubMenus: function () {
+      var submenu = document.querySelectorAll('[data-gumshoe]');
+      for (var i = 0; i < submenu.length; i++) {
+        submenu[i].parentNode.removeChild(submenu[i]);
+      }
+    },
+    removeAllActiveStateAndApplyActiveStateToCurrentElement: function (e) {
+      var menuArray = document.querySelectorAll('.js-phytoplankton-menu a');
+      for (var i = 0; i < menuArray.length; i++) {
+        menuArray[i].classList.remove('is-active');
+      }
+      e.target.classList.add('is-active');
+    },
+    setPageURLToCurrentElementURL: function (e) {
+        page.url = e.target.dataset.url;
     }
   }
 })
@@ -61,27 +70,16 @@ var page = new Vue({
   },
   created: function () {
     console.log('created');
-    var path = window.location.origin + window.location.pathname;
-    $.ajax({
-        url: 'main.styl',
-        async: false,
-        cache: true,
-        success: function(data){
-            allImports = findImports(data, path, 'styl');
-            console.log(allImports);
-        }
-    });
+    this.getMainPreProcessorStyleSheet();
   },
   beforeMount: function () {
     console.log('beforeMount');
   },
   mounted: function () {
     console.log('mounted');
-    // Set first menu link's state to "active".
-    document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
-    // Set page URL to first menu item.
-    this.url = config.menu[0].url[0];
-    // Load first file.
+
+    this.setFirstMenuItemToActive();
+    this.setPageURLToFirstMenuItem();
     this.loadFile();
   },
   // computed: {
@@ -103,46 +101,9 @@ var page = new Vue({
   },
   updated: function () { // "onReady function"
     console.log('updated');
-    var pre = document.getElementsByTagName('pre');
-    for (var i = 0, length = pre.length; i < length; i++) {
-      pre[i].classList.add('line-numbers');
-    }
 
-    function createMenu(headings) {
-        let i = 0;
-        const tags = [];
-
-        (function recurse(depth) {
-            let unclosedLi = false;
-            while (i < headings.length) {
-                const [hashes, data] = headings[i].split("# ");
-                if (hashes.length < depth) {
-                    break;
-                } else if (hashes.length === depth) {
-                    if (unclosedLi) tags.push('</li>');
-                    unclosedLi = true;
-                    var anchor = data.toLowerCase().trim().replace(/[^\w]+/g, '-');
-                    tags.push('<li>');
-                    tags.push('<a href="#' + anchor +'" data-scroll>', data.trim());
-                    tags.push('</a>');
-                    i++;
-                } else {
-                    if (i === 0) {
-                        tags.push('<ul data-gumshoe>');
-                    } else {
-                        tags.push('<ul>');
-                    }
-                    recurse(depth+1);
-                    tags.push('</ul>');
-                }
-            }
-            if (unclosedLi) tags.push('</li>');
-        })(-1);
-        return tags.join('');
-    }
-
-    $('[data-url="' + this.url + '"]').parent().append(createMenu(page.headings));
-
+    this.addLineNumberClass();
+    this.appendMenu();
     Prism.highlightAll();
     Prism.fileHighlight();
     fixie.init();
@@ -153,31 +114,55 @@ var page = new Vue({
       offset: 49
     });
   },
-  // activated: function () {
-  //   console.log('activated');
-  // },
-  // deactivated: function () {
-  //   console.log('deactivated');
-  // },
-  // beforeDestroy: function () {
-  //   console.log('beforeDestroy');
-  // },
-  // destroyed: function () {
-  //   console.log('destroyed');
-  // },
   methods: {
-    loadFile: function() {
+    setFirstMenuItemToActive: function () {
+      document.querySelectorAll('.js-phytoplankton-menu a')[0].classList.add('is-active');
+    },
+    setPageURLToFirstMenuItem: function () {
+      this.url = config.menu[0].url[0];
+    },
+    addLineNumberClass: function () {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0, length = pre.length; i < length; i++) {
+        pre[i].classList.add('line-numbers');
+      }
+    },
+    appendMenu: function () {
+      $('[data-url="' + this.url + '"]').parent().append(this.createMenu(page.headings));
+    },
+    removeStyles: function () {
+      var styles = document.head.querySelectorAll('style');
+      if (styles.length) {
+        for (var i = 0; i < styles.length; i++) {
+          styles[i].parentNode.removeChild(styles[i]);
+        }
+      }
+    },
+    getMainPreProcessorStyleSheet: function () {
+      var styleSheetPath = window.location.origin + window.location.pathname;
+      $.ajax({
+          url: 'main.styl',
+          async: false,
+          cache: true,
+          success: function(data){
+              allImports = findImports(data, styleSheetPath, 'styl');
+              console.log(allImports);
+          }
+      });
+    },
+    getHeadings: function (block) {
+      var match;
+      var regex = /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/gm;
+      while ((match = regex.exec(block.docs)) !== null) {
+        page.headings.push(match[0]);
+      }
+    },
+    loadFile: function () {
 
       // Resets
       this.blocks = [];
       this.headings = [];
-
-      var styles = document.head.querySelectorAll('style');
-      if (styles.length) {
-        for (var i = 0, lengthStyles = styles.length; i < lengthStyles; i++) {
-          styles[i].parentNode.removeChild(styles[i]);
-        }
-      }
+      this.removeStyles();
 
       var rq = new XMLHttpRequest();
 
@@ -186,7 +171,7 @@ var page = new Vue({
           if (this.status === 200) {
             var blocks = separate(this.responseText);
 
-            for (var i = 0, lengthBlocks = blocks.length; i < lengthBlocks; i++) {
+            for (var i = 0; i < blocks.length; i++) {
               var tokens = marked.lexer(blocks[i].docs);
               var links = tokens.links || {};
               var block = {
@@ -194,18 +179,14 @@ var page = new Vue({
                 code: ''
               };
 
-              var match;
-              var regex = /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/gm;
-              while ((match = regex.exec(blocks[i].docs)) !== null) {
-                page.headings.push(match[0]);
-              }
+              page.getHeadings(blocks[i]);
 
               var cleanCode = removeComments(blocks[i].code);
               if (cleanCode !== '') {
                 block.code = computeCss(cleanCode);
               }
 
-              for (var j = 0, lengthTokens = tokens.length; j < lengthTokens; j++) {
+              for (var j = 0; j < tokens.length; j++) {
                 switch (tokens[j].type) {
                   case 'code':
                     if (!tokens[j].lang) {
@@ -241,6 +222,38 @@ var page = new Vue({
 
       rq.open("GET", this.url);
       rq.send();
+    },
+    createMenu: function (headings) {
+      let i = 0;
+      const tags = [];
+
+      (function recurse(depth) {
+          let unclosedLi = false;
+          while (i < headings.length) {
+              const [hashes, data] = headings[i].split("# ");
+              if (hashes.length < depth) {
+                  break;
+              } else if (hashes.length === depth) {
+                  if (unclosedLi) tags.push('</li>');
+                  unclosedLi = true;
+                  var anchor = data.toLowerCase().trim().replace(/[^\w]+/g, '-');
+                  tags.push('<li>');
+                  tags.push('<a href="#' + anchor +'" data-scroll>', data.trim());
+                  tags.push('</a>');
+                  i++;
+              } else {
+                  if (i === 0) {
+                      tags.push('<ul data-gumshoe>');
+                  } else {
+                      tags.push('<ul>');
+                  }
+                  recurse(depth+1);
+                  tags.push('</ul>');
+              }
+          }
+          if (unclosedLi) tags.push('</li>');
+      })(-1);
+      return tags.join('');
     }
   }
 })
