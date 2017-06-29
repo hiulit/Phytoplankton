@@ -213,7 +213,8 @@ var page = new Vue({
               page.blocks.push(block);
             }
           } else {
-            return
+            alert('Request Failed!\n\nEither the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.');
+            // return
             // loader.message = '**Request Failed!**\n\nEither the file the extension *(.css, .stylus, .styl, .less, .sass, .scss)* in `config.menu.url` is missing or the file just doesn\'t exist.';
             // loader.message = marked(loader.message);
           }
